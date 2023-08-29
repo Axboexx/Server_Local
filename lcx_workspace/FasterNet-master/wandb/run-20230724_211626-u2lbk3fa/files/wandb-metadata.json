@@ -1,0 +1,163 @@
+{
+    "os": "Linux-4.15.0-197-generic-x86_64-with-glibc2.27",
+    "python": "3.9.12",
+    "heartbeatAt": "2023-07-24T13:16:28.110543",
+    "startedAt": "2023-07-24T13:16:26.783156",
+    "docker": null,
+    "cuda": null,
+    "args": [
+        "-g",
+        "0,1",
+        "--num_nodes",
+        "1",
+        "-n",
+        "2",
+        "-b",
+        "128",
+        "-e",
+        "128",
+        "--data_dir",
+        "/home/sheng/Food-101_2",
+        "--pin_memory",
+        "--wandb_project_name",
+        "fasternet",
+        "--model_ckpt_dir",
+        "./model_ckpt/",
+        "--cfg",
+        "cfg/fasternet_t0.yaml"
+    ],
+    "state": "running",
+    "program": "/home/sheng/lcx_workspace/FasterNet-master/train_test.py",
+    "codePath": "train_test.py",
+    "host": "sheng-System-Product-Name",
+    "username": "sheng",
+    "executable": "/home/sheng/anaconda3/envs/fasternet/bin/python",
+    "cpu_count": 10,
+    "cpu_count_logical": 20,
+    "cpu_freq": {
+        "current": 1220.3671,
+        "min": 1200.0,
+        "max": 4120.0
+    },
+    "cpu_freq_per_core": [
+        {
+            "current": 1200.472,
+            "min": 1200.0,
+            "max": 4100.0
+        },
+        {
+            "current": 1200.123,
+            "min": 1200.0,
+            "max": 4100.0
+        },
+        {
+            "current": 1200.299,
+            "min": 1200.0,
+            "max": 4100.0
+        },
+        {
+            "current": 1300.084,
+            "min": 1200.0,
+            "max": 4200.0
+        },
+        {
+            "current": 1200.038,
+            "min": 1200.0,
+            "max": 4100.0
+        },
+        {
+            "current": 1200.173,
+            "min": 1200.0,
+            "max": 4100.0
+        },
+        {
+            "current": 1200.001,
+            "min": 1200.0,
+            "max": 4100.0
+        },
+        {
+            "current": 1300.318,
+            "min": 1200.0,
+            "max": 4200.0
+        },
+        {
+            "current": 1200.248,
+            "min": 1200.0,
+            "max": 4100.0
+        },
+        {
+            "current": 1200.152,
+            "min": 1200.0,
+            "max": 4100.0
+        },
+        {
+            "current": 1200.118,
+            "min": 1200.0,
+            "max": 4100.0
+        },
+        {
+            "current": 1200.357,
+            "min": 1200.0,
+            "max": 4100.0
+        },
+        {
+            "current": 1200.247,
+            "min": 1200.0,
+            "max": 4100.0
+        },
+        {
+            "current": 1301.474,
+            "min": 1200.0,
+            "max": 4200.0
+        },
+        {
+            "current": 1200.819,
+            "min": 1200.0,
+            "max": 4100.0
+        },
+        {
+            "current": 1200.354,
+            "min": 1200.0,
+            "max": 4100.0
+        },
+        {
+            "current": 1201.215,
+            "min": 1200.0,
+            "max": 4100.0
+        },
+        {
+            "current": 1300.766,
+            "min": 1200.0,
+            "max": 4200.0
+        },
+        {
+            "current": 1200.007,
+            "min": 1200.0,
+            "max": 4100.0
+        },
+        {
+            "current": 1200.077,
+            "min": 1200.0,
+            "max": 4100.0
+        }
+    ],
+    "disk": {
+        "total": 1641.438591003418,
+        "used": 43.609310150146484
+    },
+    "gpu": "GeForce RTX 2080 Ti",
+    "gpu_count": 2,
+    "gpu_devices": [
+        {
+            "name": "GeForce RTX 2080 Ti",
+            "memory_total": 11554717696
+        },
+        {
+            "name": "GeForce RTX 2080 Ti",
+            "memory_total": 11552096256
+        }
+    ],
+    "memory": {
+        "total": 125.58999252319336
+    }
+}

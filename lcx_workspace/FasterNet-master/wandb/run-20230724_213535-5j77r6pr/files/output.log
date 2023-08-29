@@ -1,0 +1,37 @@
+/home/sheng/anaconda3/envs/fasternet/lib/python3.9/site-packages/pytorch_lightning/plugins/training_type/ddp.py:20: LightningDeprecationWarning: The `pl.plugins.training_type.ddp.DDPPlugin` is deprecated in v1.6 and will be removed in v1.8. Use `pl.strategies.ddp.DDPStrategy` instead.
+  rank_zero_deprecation(
+Using 16bit native Automatic Mixed Precision (AMP)
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+HPU available: False, using: 0 HPUs
+Initializing distributed: GLOBAL_RANK: 0, MEMBER: 1/2
+----------------------------------------------------------------------------------------------------
+distributed_backend=nccl
+All distributed processes registered. Starting with 2 processes
+----------------------------------------------------------------------------------------------------
+/home/sheng/anaconda3/envs/fasternet/lib/python3.9/site-packages/pytorch_lightning/core/datamodule.py:88: LightningDeprecationWarning: DataModule property `train_transforms` was deprecated in v1.5 and will be removed in v1.7.
+  rank_zero_deprecation(
+/home/sheng/anaconda3/envs/fasternet/lib/python3.9/site-packages/pytorch_lightning/core/datamodule.py:107: LightningDeprecationWarning: DataModule property `val_transforms` was deprecated in v1.5 and will be removed in v1.7.
+  rank_zero_deprecation(
+Sanity Checking DataLoader 0:   0%|                                                                                                      | 0/2 [00:00<?, ?it/s]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0,1]
+  | Name          | Type                   | Params
+---------------------------------------------------------
+0 | model         | FasterNet              | 3.9 M
+1 | criterion     | SoftTargetCrossEntropy | 0
+2 | criterion_eva | CrossEntropyLoss       | 0
+---------------------------------------------------------
+3.9 M     Trainable params
+0         Non-trainable params
+3.9 M     Total params
+7.811     Total estimated model params size (MB)
+/home/sheng/anaconda3/envs/fasternet/lib/python3.9/site-packages/pytorch_lightning/trainer/connectors/data_connector.py:240: PossibleUserWarning: The dataloader, val_dataloader 0, does not have many workers which may be a bottleneck. Consider increasing the value of the `num_workers` argument` (try 20 which is the number of cpus on this machine) in the `DataLoader` init to improve performance.
+  rank_zero_warn(
+/home/sheng/anaconda3/envs/fasternet/lib/python3.9/site-packages/pytorch_lightning/trainer/connectors/data_connector.py:240: PossibleUserWarning: The dataloader, train_dataloader, does not have many workers which may be a bottleneck. Consider increasing the value of the `num_workers` argument` (try 20 which is the number of cpus on this machine) in the `DataLoader` init to improve performance.
+load dataset_train_multi_scale
+
+
+
+
+

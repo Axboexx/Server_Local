@@ -1,0 +1,276 @@
+wandb_version: 1
+
+_wandb:
+  desc: null
+  value:
+    python_version: 3.9.12
+    cli_version: 0.15.3
+    framework: lightning
+    is_jupyter_run: false
+    is_kaggle_kernel: false
+    start_time: 1690251571.236325
+    t:
+      1:
+      - 1
+      - 9
+      - 37
+      - 38
+      - 41
+      - 55
+      - 63
+      2:
+      - 1
+      - 9
+      - 37
+      - 38
+      - 41
+      - 55
+      - 63
+      3:
+      - 7
+      - 23
+      4: 3.9.12
+      5: 0.15.3
+      8:
+      - 5
+    m:
+    - 1: trainer/global_step
+      6:
+      - 3
+    - 1: train_loss
+      5: 1
+      6:
+      - 1
+    - 1: epoch
+      5: 1
+      6:
+      - 1
+    - 1: val_loss
+      5: 1
+      6:
+      - 1
+    - 1: val_acc1
+      5: 1
+      6:
+      - 1
+    - 1: val_acc5
+      5: 1
+      6:
+      - 1
+cfg:
+  desc: null
+  value: cfg/fasternet_t0.yaml
+gpus:
+  desc: null
+  value: 0,1
+dev:
+  desc: null
+  value: 0
+num_nodes:
+  desc: null
+  value: 1
+num_workers:
+  desc: null
+  value: 2
+batch_size:
+  desc: null
+  value: 128
+batch_size_eva:
+  desc: null
+  value: 128
+model_ckpt_dir:
+  desc: null
+  value: ./model_ckpt/20230725_101927
+data_dir:
+  desc: null
+  value: /home/sheng/Food-101_2
+pin_memory:
+  desc: null
+  value: true
+checkpoint_path:
+  desc: null
+  value: model_ckpt/20230724_214631/fasternet-epoch=277-val_acc1=84.3525.ckpt
+pconv_fw_type:
+  desc: null
+  value: split_cat
+measure_latency:
+  desc: null
+  value: false
+test_phase:
+  desc: null
+  value: false
+fuse_conv_bn:
+  desc: null
+  value: false
+wandb_project_name:
+  desc: null
+  value: fasternet
+wandb_offline:
+  desc: null
+  value: false
+wandb_save_dir:
+  desc: null
+  value: ./
+pl_ckpt_2_torch_pth:
+  desc: null
+  value: false
+strategy:
+  desc: null
+  value: ddp
+benchmark:
+  desc: null
+  value: true
+pretrained:
+  desc: null
+  value: false
+sync_batchnorm:
+  desc: null
+  value: false
+dataset_name:
+  desc: null
+  value: imagenet
+image_size:
+  desc: null
+  value: 224
+multi_scale:
+  desc: null
+  value: '192_280'
+test_crop_ratio:
+  desc: null
+  value: 0.9
+opt:
+  desc: null
+  value: adamw
+weight_decay:
+  desc: null
+  value: 0.005
+momentum:
+  desc: null
+  value: 0.9
+epochs:
+  desc: null
+  value: 300
+clip_grad:
+  desc: null
+  value: None
+precision:
+  desc: null
+  value: 16
+sched:
+  desc: null
+  value: cosine
+lr:
+  desc: null
+  value: 0.004
+warmup_lr:
+  desc: null
+  value: 1.0e-06
+min_lr:
+  desc: null
+  value: 1.0e-05
+warmup_epochs:
+  desc: null
+  value: 20
+teacher_model:
+  desc: null
+  value: regnety_160
+distillation_type:
+  desc: null
+  value: none
+distillation_alpha:
+  desc: null
+  value: 0.5
+distillation_tau:
+  desc: null
+  value: 1.0
+model_name:
+  desc: null
+  value: fasternet
+mlp_ratio:
+  desc: null
+  value: 2
+embed_dim:
+  desc: null
+  value: 40
+depths:
+  desc: null
+  value:
+  - 1
+  - 2
+  - 8
+  - 2
+feature_dim:
+  desc: null
+  value: 1280
+patch_size:
+  desc: null
+  value: 4
+patch_stride:
+  desc: null
+  value: 4
+patch_size2:
+  desc: null
+  value: 2
+patch_stride2:
+  desc: null
+  value: 2
+layer_scale_init_value:
+  desc: null
+  value: 0
+drop_path_rate:
+  desc: null
+  value: 0.0
+norm_layer:
+  desc: null
+  value: BN
+act_layer:
+  desc: null
+  value: GELU
+n_div:
+  desc: null
+  value: 4
+color_jitter:
+  desc: null
+  value: 0
+aa:
+  desc: null
+  value: None
+train_interpolation:
+  desc: null
+  value: bicubic
+smoothing:
+  desc: null
+  value: 0.1
+reprob:
+  desc: null
+  value: 0
+remode:
+  desc: null
+  value: pixel
+recount:
+  desc: null
+  value: 1
+mixup:
+  desc: null
+  value: 0.05
+cutmix:
+  desc: null
+  value: 1.0
+cutmix_minmax:
+  desc: null
+  value: None
+mixup_prob:
+  desc: null
+  value: 1.0
+mixup_switch_prob:
+  desc: null
+  value: 0.5
+mixup_mode:
+  desc: null
+  value: batch
+flops:
+  desc: null
+  value: 336.89056
+params:
+  desc: null
+  value: 2.753881

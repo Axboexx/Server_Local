@@ -1,0 +1,30 @@
+2023-07-24 20:32:36,891 INFO    MainThread:25481 [wandb_setup.py:_flush():76] Current SDK version is 0.15.3
+2023-07-24 20:32:36,892 INFO    MainThread:25481 [wandb_setup.py:_flush():76] Configure stats pid to 25481
+2023-07-24 20:32:36,892 INFO    MainThread:25481 [wandb_setup.py:_flush():76] Loading settings from /home/sheng/.config/wandb/settings
+2023-07-24 20:32:36,892 INFO    MainThread:25481 [wandb_setup.py:_flush():76] Loading settings from /home/sheng/lcx_workspace/FasterNet-master/wandb/settings
+2023-07-24 20:32:36,892 INFO    MainThread:25481 [wandb_setup.py:_flush():76] Loading settings from environment variables: {}
+2023-07-24 20:32:36,892 INFO    MainThread:25481 [wandb_setup.py:_flush():76] Applying setup settings: {'_disable_service': False}
+2023-07-24 20:32:36,892 INFO    MainThread:25481 [wandb_setup.py:_flush():76] Inferring run settings from compute environment: {'program_relpath': 'train_test.py', 'program': '/home/sheng/lcx_workspace/FasterNet-master/train_test.py'}
+2023-07-24 20:32:36,892 INFO    MainThread:25481 [wandb_init.py:_log_setup():507] Logging user logs to ./wandb/run-20230724_203236-yuyzeyb4/logs/debug.log
+2023-07-24 20:32:36,892 INFO    MainThread:25481 [wandb_init.py:_log_setup():508] Logging internal logs to ./wandb/run-20230724_203236-yuyzeyb4/logs/debug-internal.log
+2023-07-24 20:32:36,893 INFO    MainThread:25481 [wandb_init.py:init():547] calling init triggers
+2023-07-24 20:32:36,893 INFO    MainThread:25481 [wandb_init.py:init():554] wandb.init called with sweep_config: {}
+config: {}
+2023-07-24 20:32:36,893 INFO    MainThread:25481 [wandb_init.py:init():596] starting backend
+2023-07-24 20:32:36,893 INFO    MainThread:25481 [wandb_init.py:init():600] setting up manager
+2023-07-24 20:32:36,899 INFO    MainThread:25481 [backend.py:_multiprocessing_setup():106] multiprocessing start_methods=fork,spawn,forkserver, using: spawn
+2023-07-24 20:32:36,903 INFO    MainThread:25481 [wandb_init.py:init():606] backend started and connected
+2023-07-24 20:32:36,908 INFO    MainThread:25481 [wandb_init.py:init():700] updated telemetry
+2023-07-24 20:32:36,909 INFO    MainThread:25481 [wandb_init.py:init():737] communicating run to backend with 60.0 second timeout
+2023-07-24 20:32:37,886 INFO    MainThread:25481 [wandb_run.py:_on_init():2177] communicating current version
+2023-07-24 20:32:38,153 INFO    MainThread:25481 [wandb_run.py:_on_init():2186] got version response upgrade_message: "wandb version 0.15.5 is available!  To upgrade, please run:\n $ pip install wandb --upgrade"
+
+2023-07-24 20:32:38,153 INFO    MainThread:25481 [wandb_init.py:init():787] starting run threads in backend
+2023-07-24 20:32:39,971 INFO    MainThread:25481 [wandb_run.py:_console_start():2158] atexit reg
+2023-07-24 20:32:39,972 INFO    MainThread:25481 [wandb_run.py:_redirect():2013] redirect: SettingsConsole.WRAP_RAW
+2023-07-24 20:32:39,972 INFO    MainThread:25481 [wandb_run.py:_redirect():2078] Wrapping output streams.
+2023-07-24 20:32:39,973 INFO    MainThread:25481 [wandb_run.py:_redirect():2103] Redirects installed.
+2023-07-24 20:32:39,974 INFO    MainThread:25481 [wandb_init.py:init():829] run started, returning control to user process
+2023-07-24 20:32:39,987 INFO    MainThread:25481 [wandb_run.py:_config_callback():1286] config_cb None None {'cfg': 'cfg/fasternet_t0.yaml', 'gpus': '0,1', 'dev': 0, 'num_nodes': 1, 'num_workers': 2, 'batch_size': 128, 'batch_size_eva': 128, 'model_ckpt_dir': './model_ckpt/', 'data_dir': '/hoem/sheng/Food-101_2', 'pin_memory': True, 'checkpoint_path': 'None', 'pconv_fw_type': 'split_cat', 'measure_latency': False, 'test_phase': False, 'fuse_conv_bn': False, 'wandb_project_name': 'fasternet', 'wandb_offline': False, 'wandb_save_dir': './', 'pl_ckpt_2_torch_pth': False, 'strategy': 'ddp', 'benchmark': True, 'pretrained': False, 'sync_batchnorm': False, 'dataset_name': 'imagenet', 'image_size': 224, 'multi_scale': '192_280', 'test_crop_ratio': 0.9, 'opt': 'adamw', 'weight_decay': 0.005, 'momentum': 0.9, 'epochs': 300, 'clip_grad': 'None', 'precision': 16, 'sched': 'cosine', 'lr': 0.004, 'warmup_lr': 1e-06, 'min_lr': 1e-05, 'warmup_epochs': 20, 'teacher_model': 'regnety_160', 'distillation_type': 'none', 'distillation_alpha': 0.5, 'distillation_tau': 1.0, 'model_name': 'fasternet', 'mlp_ratio': 2, 'embed_dim': 40, 'depths': [1, 2, 8, 2], 'feature_dim': 1280, 'patch_size': 4, 'patch_stride': 4, 'patch_size2': 2, 'patch_stride2': 2, 'layer_scale_init_value': 0, 'drop_path_rate': 0.0, 'norm_layer': 'BN', 'act_layer': 'GELU', 'n_div': 4, 'color_jitter': 0, 'aa': 'None', 'train_interpolation': 'bicubic', 'smoothing': 0.1, 'reprob': 0, 'remode': 'pixel', 'recount': 1, 'mixup': 0.05, 'cutmix': 1.0, 'cutmix_minmax': 'None', 'mixup_prob': 1.0, 'mixup_switch_prob': 0.5, 'mixup_mode': 'batch'}
+2023-07-24 20:32:39,989 INFO    MainThread:25481 [wandb_run.py:_config_callback():1286] config_cb None None {'flops': 338.04128, 'params': 3.9055}
+2023-07-24 20:32:46,821 WARNING MsgRouterThr:25481 [router.py:message_loop():77] message_loop has been closed

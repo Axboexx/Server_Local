@@ -1,0 +1,29 @@
+/home/sheng/anaconda3/envs/fasternet/lib/python3.9/site-packages/pytorch_lightning/plugins/training_type/ddp.py:20: LightningDeprecationWarning: The `pl.plugins.training_type.ddp.DDPPlugin` is deprecated in v1.6 and will be removed in v1.8. Use `pl.strategies.ddp.DDPStrategy` instead.
+  rank_zero_deprecation(
+Using 16bit native Automatic Mixed Precision (AMP)
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+HPU available: False, using: 0 HPUs
+Traceback (most recent call last):
+  File "/home/sheng/lcx_workspace/FasterNet-master/train_test.py", line 152, in <module>
+    main(args)
+  File "/home/sheng/lcx_workspace/FasterNet-master/train_test.py", line 111, in main
+    trainer.fit(model, dm)
+  File "/home/sheng/anaconda3/envs/fasternet/lib/python3.9/site-packages/pytorch_lightning/trainer/trainer.py", line 770, in fit
+    self._call_and_handle_interrupt(
+  File "/home/sheng/anaconda3/envs/fasternet/lib/python3.9/site-packages/pytorch_lightning/trainer/trainer.py", line 721, in _call_and_handle_interrupt
+    return self.strategy.launcher.launch(trainer_fn, *args, trainer=self, **kwargs)
+  File "/home/sheng/anaconda3/envs/fasternet/lib/python3.9/site-packages/pytorch_lightning/strategies/launchers/subprocess_script.py", line 93, in launch
+    return function(*args, **kwargs)
+  File "/home/sheng/anaconda3/envs/fasternet/lib/python3.9/site-packages/pytorch_lightning/trainer/trainer.py", line 811, in _fit_impl
+    results = self._run(model, ckpt_path=self.ckpt_path)
+  File "/home/sheng/anaconda3/envs/fasternet/lib/python3.9/site-packages/pytorch_lightning/trainer/trainer.py", line 1164, in _run
+    self._data_connector.prepare_data()
+  File "/home/sheng/anaconda3/envs/fasternet/lib/python3.9/site-packages/pytorch_lightning/trainer/connectors/data_connector.py", line 124, in prepare_data
+    self.trainer.datamodule.prepare_data()
+  File "/home/sheng/lcx_workspace/FasterNet-master/data/custom_imagenet_data.py", line 105, in prepare_data
+    self._verify_splits(self.data_dir, "train")
+  File "/home/sheng/lcx_workspace/FasterNet-master/data/custom_imagenet_data.py", line 89, in _verify_splits
+    dirs = os.listdir(data_dir)
+FileNotFoundError: [Errno 2] No such file or directory: '/hoem/sheng/Food-101_2'

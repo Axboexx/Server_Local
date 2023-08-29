@@ -1,0 +1,16 @@
+/home/sheng/anaconda3/envs/fasternet/lib/python3.9/site-packages/pytorch_lightning/plugins/training_type/ddp.py:20: LightningDeprecationWarning: The `pl.plugins.training_type.ddp.DDPPlugin` is deprecated in v1.6 and will be removed in v1.8. Use `pl.strategies.ddp.DDPStrategy` instead.
+  rank_zero_deprecation(
+Traceback (most recent call last):
+  File "/home/sheng/lcx_workspace/FasterNet-master/train_test.py", line 152, in <module>
+    main(args)
+  File "/home/sheng/lcx_workspace/FasterNet-master/train_test.py", line 93, in main
+    trainer = pl.Trainer(
+  File "/home/sheng/anaconda3/envs/fasternet/lib/python3.9/site-packages/pytorch_lightning/utilities/argparse.py", line 339, in insert_env_defaults
+    return fn(self, **kwargs)
+  File "/home/sheng/anaconda3/envs/fasternet/lib/python3.9/site-packages/pytorch_lightning/trainer/trainer.py", line 485, in __init__
+    self._accelerator_connector = AcceleratorConnector(
+  File "/home/sheng/anaconda3/envs/fasternet/lib/python3.9/site-packages/pytorch_lightning/trainer/connectors/accelerator_connector.py", line 201, in __init__
+    self._set_parallel_devices_and_init_accelerator()
+  File "/home/sheng/anaconda3/envs/fasternet/lib/python3.9/site-packages/pytorch_lightning/trainer/connectors/accelerator_connector.py", line 519, in _set_parallel_devices_and_init_accelerator
+    raise MisconfigurationException(
+pytorch_lightning.utilities.exceptions.MisconfigurationException: GPUAccelerator can not run on your system since the accelerator is not available. The following accelerator(s) is available and can be passed into `accelerator` argument of `Trainer`: ['cpu'].
