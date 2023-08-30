@@ -49,7 +49,7 @@ class Partial_conv3(nn.Module):
 
         return x
 
-
+# FasterNet_Block
 class MLPBlock(nn.Module):
 
     def __init__(self,
@@ -77,9 +77,9 @@ class MLPBlock(nn.Module):
             act_layer(),
             nn.Conv2d(mlp_hidden_dim, dim, 1, bias=False)
         ]
-
+        # conv+BN+ReLu+Conv
         self.mlp = nn.Sequential(*mlp_layer)
-
+        # PConv
         self.spatial_mixing = Partial_conv3(
             dim,
             n_div,
@@ -105,7 +105,7 @@ class MLPBlock(nn.Module):
             self.layer_scale.unsqueeze(-1).unsqueeze(-1) * self.mlp(x))
         return x
 
-
+#Block_List consist of FasterNet_Block
 class BasicStage(nn.Module):
 
     def __init__(self,
@@ -199,11 +199,12 @@ class FasterNet(nn.Module):
                  **kwargs):
         super().__init__()
 
+        # 设置normlayer
         if norm_layer == 'BN':
             norm_layer = nn.BatchNorm2d
         else:
             raise NotImplementedError
-
+        # 设置激活函数
         if act_layer == 'GELU':
             act_layer = nn.GELU
         elif act_layer == 'RELU':
@@ -222,9 +223,13 @@ class FasterNet(nn.Module):
 
         # split image into non-overlapping patches
         self.patch_embed = PatchEmbed(
+            # 4
             patch_size=patch_size,
+            # 4
             patch_stride=patch_stride,
+            # 3
             in_chans=in_chans,
+            # 192
             embed_dim=embed_dim,
             norm_layer=norm_layer if self.patch_norm else None
         )
