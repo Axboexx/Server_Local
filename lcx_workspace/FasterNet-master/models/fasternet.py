@@ -8,11 +8,13 @@ from typing import List
 from torch import Tensor
 import copy
 import os
+from .model_api import LitModel
 
 try:
     from mmdet.models.builder import BACKBONES as det_BACKBONES
     from mmdet.utils import get_root_logger
     from mmcv.runner import _load_checkpoint
+
     has_mmdet = True
 except ImportError:
     print("If for detection, please install mmdetection first")
@@ -36,7 +38,7 @@ class Partial_conv3(nn.Module):
 
     def forward_slicing(self, x: Tensor) -> Tensor:
         # only for inference
-        x = x.clone()   # !!! Keep the original input intact for the residual connection later
+        x = x.clone()  # !!! Keep the original input intact for the residual connection later
         x[:, :self.dim_conv3, :, :] = self.partial_conv3(x[:, :self.dim_conv3, :, :])
 
         return x
@@ -48,6 +50,7 @@ class Partial_conv3(nn.Module):
         x = torch.cat((x1, x2), 1)
 
         return x
+
 
 # FasterNet_Block
 class MLPBlock(nn.Module):
@@ -105,7 +108,8 @@ class MLPBlock(nn.Module):
             self.layer_scale.unsqueeze(-1).unsqueeze(-1) * self.mlp(x))
         return x
 
-#Block_List consist of FasterNet_Block
+
+# Block_List consist of FasterNet_Block
 class BasicStage(nn.Module):
 
     def __init__(self,
@@ -119,7 +123,6 @@ class BasicStage(nn.Module):
                  act_layer,
                  pconv_fw_type
                  ):
-
         super().__init__()
 
         blocks_list = [
@@ -363,3 +366,7 @@ class FasterNet(nn.Module):
                 outs.append(x_out)
 
         return outs
+
+
+if __name__ == '__main__':
+    model = FasterNet()
