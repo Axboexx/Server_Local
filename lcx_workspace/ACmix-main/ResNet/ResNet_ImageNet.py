@@ -1,6 +1,10 @@
+import time
+
 import torch
 import torch.nn as nn
-from torchvision.models.utils import load_state_dict_from_url
+import torchvision
+# from torchvision.models.utils import load_state_dict_from_url
+from torch.hub import load_state_dict_from_url
 from test_bottleneck import ACmix
 
 
@@ -137,24 +141,43 @@ class ResNet(nn.Module):
                                 base_width=self.base_width, dilation=self.dilation,
                                 norm_layer=norm_layer))
 
-        return nn.Sequential(*layers)
+        result = nn.Sequential(*layers)
+        return result
 
     def _forward_impl(self, x):
         # See note [TorchScript super()]
+        # [2, 3, 224, 224]
+
         x = self.conv1(x)
+        # [2, 64, 112, 112]
         x = self.bn1(x)
+
         x = self.relu(x)
+
         x = self.maxpool(x)
+        # [2, 64, 56, 56]
 
         x = self.layer1(x)
+        # [2,256,56,56]
+
         x = self.layer2(x)
+        # [2,512,28,28]
+
         x = self.layer3(x)
+        # [2,1024,14,14]
+
         x = self.layer4(x)
+        # [2,2048,7,7]
+        print(x.size())
 
         x = self.avgpool(x)
-        x = torch.flatten(x, 1)
-        x = self.fc(x)
+        # [2,2048,1,1]
 
+        x = torch.flatten(x, 1)
+        # [2,2048]
+
+        x = self.fc(x)
+        # [2,1000]
         return x
 
     def forward(self, x):
@@ -166,16 +189,18 @@ def _resnet(block, layers, **kwargs):
     return model
 
 
-def ACmix_ResNet(layers=[3,4,6,3], **kwargs):
+def ACmix_ResNet(layers=[3, 4, 6, 3], **kwargs):
     return _resnet(Bottleneck, layers, **kwargs)
 
 
 if __name__ == '__main__':
-    model = ACmix_ResNet().cuda()
-    input = torch.randn([2,3,224,224]).cuda()
+    model = ACmix_ResNet()
+    print(model)
+    input = torch.randn([2, 3, 224, 224])
     total_params = sum(p.numel() for p in model.parameters())
     print(f'{total_params:,} total parameters.')
     total_trainable_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
     print(f'{total_trainable_params:,} training parameters.')
+    output = model(input)
     print(model(input).shape)
     # print(summary(model, torch.zeros((1, 3, 224, 224)).cuda()))
