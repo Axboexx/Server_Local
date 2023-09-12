@@ -73,7 +73,6 @@ class LitModel(pl.LightningModule):
             self.model = create_model(
                 hparams.model_name,
                 # pretrained=hparams.pretrained,
-                num_classes=num_classes
             )
 
         base_criterion = build_criterion(hparams)
@@ -100,7 +99,8 @@ class LitModel(pl.LightningModule):
                                               hparams.distillation_tau
                                               )
         self.criterion_eva = torch.nn.CrossEntropyLoss()
-        self.mixup_fn = build_mixup_fn(hparams, num_classes)
+        # self.mixup_fn = build_mixup_fn(hparams, num_classes)
+        self.mixup_fn = None
 
     def forward(self, x):
         return self.model(x)

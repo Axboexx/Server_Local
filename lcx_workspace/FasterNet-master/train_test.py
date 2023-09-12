@@ -11,7 +11,7 @@ import pytorch_lightning as pl
 from pytorch_lightning.callbacks import ModelCheckpoint, TQDMProgressBar, StochasticWeightAveraging
 from pytorch_lightning.loggers import WandbLogger
 from pytorch_lightning import seed_everything
-from pytorch_lightning.plugins import DDPPlugin
+from pytorch_lightning.strategies import DDPStrategy
 
 from utils.utils import *
 from utils.fuse_conv_bn import fuse_conv_bn
@@ -131,6 +131,8 @@ if __name__ == "__main__":
     parser.add_argument('-e', "--batch_size_eva", type=int, default=1000, help='batch_size for evaluation')
     parser.add_argument("--model_ckpt_dir", type=str, default="./model_ckpt/")
     parser.add_argument("--data_dir", type=str, default="../../data/imagenet")
+    parser.add_argument("--train_dir", type=str, default="../../data/imagenet")
+    parser.add_argument("--test_dir", type=str, default="../../data/imagenet")
     parser.add_argument('--pin_memory', action='store_true')
     parser.add_argument("--checkpoint_path", type=str, default=None)
     parser.add_argument("--pconv_fw_type", type=str, default='split_cat',
@@ -149,5 +151,6 @@ if __name__ == "__main__":
     args = merge_args_cfg(args, cfg)
     # please change {WANDB_API_KEY} to your personal api_key before using wandb
     # os.environ["WANDB_API_KEY"] = "{WANDB_API_KEY}"
+    print(args.dataset_name)
 
     main(args)

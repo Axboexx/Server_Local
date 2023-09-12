@@ -3,6 +3,7 @@ import os
 from typing import Any, Callable, Optional
 
 import torch
+import PIL
 from pytorch_lightning import LightningDataModule
 from torch.utils.data import DataLoader
 from torchvision import datasets
@@ -22,6 +23,48 @@ else:  # pragma: no cover
     warn_missing_pkg("torchvision")
 
 
+def My_loader(path):
+    return PIL.Image.open(path).convert('RGB')
+
+
+class MyDataset(torch.utils.data.Dataset):
+
+    def __init__(self, txt_dir, image_path, transform=None, target_transform=None, loader=My_loader):
+        data_txt = open(txt_dir, 'r')
+        imgs = []
+        for line in data_txt:
+            line = line.strip()
+            words = line.split(' ')
+            imgs.append((words[0], int(words[1])))
+        self.imgs = imgs
+        self.transform = transform
+        self.target_transform = target_transform
+        self.loader = My_loader
+        self.image_path = image_path
+
+    def __len__(self):
+
+        return len(self.imgs)
+
+    def __getitem__(self, index):
+        img_name, label = self.imgs[index]
+
+        # label = list(map(int, label))
+        # print label
+
+        # print type(label)
+
+        img = self.loader(os.path.join(self.image_path, img_name))
+        # print img
+        if self.transform is not None:
+            img = self.transform(img)
+            # print img.size()
+            # label =torch.Tensor(label)
+
+            # print label.size()
+        return img, label
+
+
 class custom_ImagenetDataModule(LightningDataModule):
     """
     The train set is the imagenet train.
@@ -32,20 +75,20 @@ class custom_ImagenetDataModule(LightningDataModule):
     name = "imagenet"
 
     def __init__(
-        self,
-        data_dir: str,
-        meta_dir: Optional[str] = None,
-        image_size: int = 224,
-        num_workers: int = 0,
-        batch_size: int = 32,
-        batch_size_eva: int = 32,
-        # dist_eval: bool = True,
-        pin_memory: bool = True,
-        drop_last: bool = False,
-        train_transforms_multi_scale = None,
-        scaling_epoch = None,
-        *args: Any,
-        **kwargs: Any,
+            self,
+            data_dir: str,
+            meta_dir: Optional[str] = None,
+            image_size: int = 224,
+            num_workers: int = 0,
+            batch_size: int = 32,
+            batch_size_eva: int = 32,
+            # dist_eval: bool = True,
+            pin_memory: bool = True,
+            drop_last: bool = False,
+            train_transforms_multi_scale=None,
+            scaling_epoch=None,
+            *args: Any,
+            **kwargs: Any,
     ) -> None:
         """
         Args:
@@ -116,13 +159,172 @@ class custom_ImagenetDataModule(LightningDataModule):
 
             if self.train_transforms_multi_scale is not None:
                 self.dataset_train_multi_scale = datasets.ImageFolder(os.path.join(self.data_dir, 'train'),
-                                                          transform=self.train_transforms_multi_scale)
+                                                                      transform=self.train_transforms_multi_scale)
             else:
                 self.dataset_train_multi_scale = None
 
         if stage == "test" or stage is None:
             val_transforms = self.val_transform() if self.val_transforms is None else self.val_transforms
             self.dataset_test = datasets.ImageFolder(os.path.join(self.data_dir, 'val'), transform=val_transforms)
+
+    def train_dataloader(self) -> DataLoader:
+        if self.dataset_train_multi_scale is not None and \
+                self.trainer.current_epoch < self.scaling_epoch:
+            dataset = self.dataset_train_multi_scale
+            print("load dataset_train_multi_scale")
+        else:
+            dataset = self.dataset_train
+            print("load dataset_train")
+
+        loader: DataLoader = DataLoader(
+            dataset,
+            batch_size=self.batch_size,
+            shuffle=True,
+            num_workers=self.num_workers,
+            drop_last=self.drop_last,
+            pin_memory=self.pin_memory
+        )
+        return loader
+
+    def val_dataloader(self) -> DataLoader:
+        loader: DataLoader = DataLoader(
+            self.dataset_val,
+            batch_size=self.batch_size_eva,
+            # persistent_workers=True,
+            shuffle=False,
+            num_workers=self.num_workers,
+            drop_last=False,
+            pin_memory=self.pin_memory
+        )
+        return loader
+
+    def test_dataloader(self) -> DataLoader:
+        """Uses the validation split of imagenet2012 for testing."""
+        loader: DataLoader = DataLoader(
+            self.dataset_test,
+            batch_size=self.batch_size_eva,
+            # persistent_workers=True,
+            shuffle=False,
+            num_workers=self.num_workers,
+            drop_last=False,
+            pin_memory=self.pin_memory
+        )
+        return loader
+
+    def train_transform(self) -> Callable:
+        preprocessing = transforms.Compose(
+            [
+                transforms.RandomResizedCrop(self.image_size),
+                transforms.RandomHorizontalFlip(),
+                transforms.ToTensor(),
+                imagenet_normalization(),
+            ]
+        )
+
+        return preprocessing
+
+    def val_transform(self) -> Callable:
+
+        preprocessing = transforms.Compose(
+            [
+                transforms.Resize(self.image_size + 32),
+                transforms.CenterCrop(self.image_size),
+                transforms.ToTensor(),
+                imagenet_normalization(),
+            ]
+        )
+        return preprocessing
+
+
+class custom_fru92DataModule(LightningDataModule):
+    name = "fru92"
+
+    def __init__(
+            self,
+            data_dir: str,
+            train_dir='',
+            test_dir='',
+            meta_dir: Optional[str] = None,
+            image_size: int = 224,
+            num_workers: int = 0,
+            batch_size: int = 32,
+            batch_size_eva: int = 32,
+            # dist_eval: bool = True,
+            pin_memory: bool = True,
+            drop_last: bool = False,
+            train_transforms_multi_scale=None,
+            scaling_epoch=None,
+            *args: Any,
+            **kwargs: Any,
+    ) -> None:
+        """
+        Args:
+             data_dir: path to the imagenet dataset file
+             meta_dir: path to meta.bin file
+             image_size: final image size
+             num_workers: how many data workers
+             batch_size: batch_size
+             pin_memory: If true, the data loader will copy Tensors into CUDA pinned memory before
+                         returning them
+             drop_last: If true drops the last incomplete batch
+        """
+        super().__init__(*args, **kwargs)
+
+        if not _TORCHVISION_AVAILABLE:  # pragma: no cover
+            raise ModuleNotFoundError(
+                "You want to use ImageNet dataset loaded from `torchvision` which is not installed yet."
+            )
+        self.image_size = image_size
+        self.dims = (3, self.image_size, self.image_size)
+        self.data_dir = data_dir
+        self.train_dir = train_dir
+        self.test_dir = test_dir
+        self.num_workers = num_workers
+        self.meta_dir = meta_dir
+        self.batch_size = batch_size
+        self.batch_size_eva = batch_size_eva
+        self.pin_memory = pin_memory
+        self.drop_last = drop_last
+        self.num_samples = 1281167
+        self.num_tasks = get_world_size()
+        self.global_rank = get_rank()
+        self.train_transforms_multi_scale = train_transforms_multi_scale
+        self.scaling_epoch = scaling_epoch
+
+    def num_classes(self) -> int:
+        return 92
+
+    # def _verify_splits(self, data_dir: str, split: str) -> None:
+    #     dirs = os.listdir(data_dir)
+    #
+    #     if split not in dirs:
+    #         raise FileNotFoundError(
+    #             f"a {split} fur92 split was not found in {data_dir},"
+    #             f" make sure the folder contains a subfolder named {split}"
+    #         )
+
+    # def prepare_data(self) -> None:
+    #     self._verify_splits(self.data_dir, "train")
+    #     self._verify_splits(self.data_dir, "val")
+
+    def setup(self, stage: Optional[str] = None) -> None:
+        """Creates train, val, and test dataset."""
+        if stage == "fit" or stage is None:
+            train_transforms = self.train_transform() if self.train_transforms is None else self.train_transforms
+            val_transforms = self.val_transform() if self.val_transforms is None else self.val_transforms
+
+            self.dataset_train = MyDataset(txt_dir=self.train_dir, image_path=self.data_dir, transform=train_transforms)
+            self.dataset_val = MyDataset(txt_dir=self.test_dir, image_path=self.data_dir, transform=val_transforms)
+
+            if self.train_transforms_multi_scale is not None:
+                self.dataset_train_multi_scale = datasets.ImageFolder(os.path.join(self.data_dir, 'train'),
+                                                                      transform=self.train_transforms_multi_scale)
+            else:
+                self.dataset_train_multi_scale = None
+
+        if stage == "test" or stage is None:
+            val_transforms = self.val_transform() if self.val_transforms is None else self.val_transforms
+            self.dataset_test = MyDataset(txt_dir=self.test_dir, image_path=self.data_dir, transform=val_transforms)
 
     def train_dataloader(self) -> DataLoader:
         if self.dataset_train_multi_scale is not None and \
@@ -226,9 +428,10 @@ def build_imagenet_transform(is_train, args, image_size):
             print(f"Warping {image_size} size input images...")
         else:
             # size = int((256 / 224) * image_size)
-            size = int(1.0*image_size/args.test_crop_ratio)
+            size = int(1.0 * image_size / args.test_crop_ratio)
             t.append(
-                transforms.Resize(size, interpolation=transforms.InterpolationMode.BICUBIC),  # to maintain same ratio w.r.t. 224 images
+                transforms.Resize(size, interpolation=transforms.InterpolationMode.BICUBIC),
+                # to maintain same ratio w.r.t. 224 images
             )
             t.append(transforms.CenterCrop(image_size))
 

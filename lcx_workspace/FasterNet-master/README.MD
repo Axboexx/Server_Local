@@ -102,6 +102,14 @@ python train_test.py -g 0,1,2,3,4,5,6,7 --num_nodes 1 -n 4 -b 4096 -e 2000 \
 --data_dir ../../data/imagenet --pin_memory --wandb_project_name fasternet \
 --model_ckpt_dir ./model_ckpt/$(date +'%Y%m%d_%H%M%S') --cfg cfg/fasternet_t0.yaml
 ```
+
+
+```
+python train_test.py -g 0 --num_nodes 1 -n 16 -b 128 -e 2000 \
+--data_dir /home/fru92/fru92_images --pin_memory --wandb_project_name mobilenetv2 \
+--model_ckpt_dir ./model_ckpt/$(date +'%Y%m%d_%H%M%S') --cfg cfg/mobilenetv2_140.yaml
+```
+
 To train other FasterNet variants, `--cfg` need to be changed. You may also want to change the training batch size `-b`.       
   
 

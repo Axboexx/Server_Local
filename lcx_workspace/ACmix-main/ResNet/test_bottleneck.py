@@ -119,11 +119,16 @@ class ACmix(nn.Module):
         att = (q_att.unsqueeze(2) * (unfold_k + q_pe.unsqueeze(2) - unfold_rpe)).sum(1)
         # att:[8,49,56,56]
         att = self.softmax(att)
-
+        # att:[8,49,56,56]
         out_att = self.unfold(self.pad_att(v_att)).view(b * self.head, self.head_dim, self.kernel_att * self.kernel_att,
                                                         h_out, w_out)
+        # out_att:[8,16,49,56,56]
+        test = att.unsqueeze(1) * out_att
         out_att = (att.unsqueeze(1) * out_att).sum(2).view(b, self.out_planes, h_out, w_out)
+        # out_att: [2, 64, 56, 56]
 
+
+ 
         ## conv
         f_all = self.fc(torch.cat(
             [q.view(b, self.head, self.head_dim, h * w), k.view(b, self.head, self.head_dim, h * w),
