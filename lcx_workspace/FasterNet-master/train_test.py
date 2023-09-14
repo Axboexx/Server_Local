@@ -101,7 +101,7 @@ def main(args):
         sync_batchnorm=args.sync_batchnorm,
         num_nodes=args.num_nodes,
         gradient_clip_val=args.clip_grad,
-        strategy=DDPPlugin(find_unused_parameters=find_unused_para) if args.strategy == 'ddp' else args.strategy,
+        strategy=DDPStrategy(find_unused_parameters=find_unused_para) if args.strategy == 'ddp' else args.strategy,
         callbacks=callbacks,
         precision=args.precision,
         benchmark=args.benchmark

@@ -9,6 +9,13 @@
           </advancedOptions>
         </fileTransfer>
       </webServer>
+      <webServer id="ed8a1ef3-8e25-42aa-83fc-6bb3f34abd75" name="ai_station">
+        <fileTransfer accessType="SFTP" host="10.10.5.213" port="30027" sshConfigId="13ab3201-8ce9-4603-9077-9a7c4351793f" sshConfig="root@10.10.5.213:30027 password">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" keepAliveTimeout="0" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
     </option>
   </component>
 </project>
