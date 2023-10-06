@@ -8,6 +8,7 @@ import math
 
 import torch
 from torch import nn
+from torchinfo import torchinfo
 
 
 class Swish(nn.Module):
@@ -343,3 +344,9 @@ class MixNet(nn.Module):
                 n = m.weight.size(1)
                 m.weight.data.normal_(0, 0.01)
                 m.bias.data.zero_()
+
+
+if __name__ == '__main__':
+    model = MixNet('mixnet_s')
+    model.eval()
+    torchinfo.summary(model, input_size=(3, 3, 224, 224))
