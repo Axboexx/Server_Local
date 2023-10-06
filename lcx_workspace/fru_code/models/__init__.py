@@ -7,6 +7,8 @@
 from .mobilevit import *
 from .mobilenet_v3 import *
 from .mixnet import *
+from timm.models import create_model
+from .Testnet import TestNet
 
 
 def get_model(model_name, num_class):
@@ -27,4 +29,8 @@ def get_model(model_name, num_class):
         model = MixNet(model_name, num_classes=num_class)
     elif model_name == 'mixnet_l':
         model = MixNet(model_name, num_classes=num_class)
+    elif model_name == 'mobilenetv2_140':
+        model = create_model(model_name=model_name)
+    elif model_name == 'TestNet':
+        model = TestNet()
     return model
