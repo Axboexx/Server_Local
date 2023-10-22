@@ -3,11 +3,14 @@
 @File    ：Testnet.py
 @IDE     ：PyCharm 
 @Author  ：chengxuLiu
-@Date    ：2023/10/1 15:41 
+@Date    ：2023/10/9 21:11 
 """
-from .Testnet_utils.Ghostmodel import *
-from .Testnet_utils.PartialConv import *
-from .Testnet_utils.Transformer import *
+import time
+
+import torch.nn as nn
+from Testnet_utils.Ghostmodel import *
+from Testnet_utils.PartialConv import *
+from Testnet_utils.Transformer import *
 
 
 class TestNet(nn.Module):
