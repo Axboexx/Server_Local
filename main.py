@@ -1,19 +1,18 @@
-import cv2
 import numpy as np
+import os
+import shutil
 
-# 加载图像
-image = cv2.imread('123.jpg')
-
-# 图像去噪
-denoised_image = cv2.fastNlMeansDenoisingColored(image, None, 10, 10, 7, 21)
-
-# 图像锐化
-sharp_kernel = np.array([[-1, -1, -1], [-1, 9, -1], [-1, -1, -1]])
-sharpened_image = cv2.filter2D(denoised_image, -1, sharp_kernel)
-
-# 图像增强
-enhanced_image = cv2.convertScaleAbs(sharpened_image, alpha=1.2, beta=0)
-
-# 图像对比度增强
-
-cv2.imwrite('new.jpg',enhanced_image)
+if __name__ == '__main__':
+    txt_dir = '/fru92_images/fru_train_0.txt'
+    data_txt = open(txt_dir, 'r')
+    imgs = []
+    for line in data_txt:
+        line = line.strip()
+        class_name = line.split('/')[0]
+        folder_path = '/ai09/fru92_k0/train/' + class_name
+        if not os.path.exists(folder_path):
+            os.makedirs(folder_path)
+        words = line.split(' ')
+        imgs.append((" ".join(words[:-1]), int(words[-1])))
+        source_path = '/fru92_images/' + imgs[0][0]
+        destination_path = '/ai09/fru92_k0/train/' + imgs[0][0]
