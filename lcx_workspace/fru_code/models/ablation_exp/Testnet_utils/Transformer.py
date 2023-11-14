@@ -105,8 +105,14 @@ class PatchEmbedding(nn.Module):
         )
         self.cls_token = nn.Parameter(torch.randn(1, 1, embed_size))
         self.positions = nn.Parameter(torch.randn((img_size) ** 2 + 1, embed_size))
+        self.encoder = nn.Sequential(
+
+        )
 
     def forward(self, x):
+        x = self.encoder(x)
+        y = x[:, 0, :]
+        y = self.encoder2(y)
         batch_size = x.shape[0]
         x = self.patch_projection(x)
         # prepend the cls token to the input
@@ -134,4 +140,3 @@ class Transformer(nn.Module):
             x = attn(x)
             x = ff(x)
         return x
-

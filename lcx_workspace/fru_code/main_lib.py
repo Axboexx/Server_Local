@@ -5,9 +5,27 @@
 @Software: PyCharm
 """
 import os
-import time
 import numpy as np
 import torch
+import yaml
+import time
+from argparse import Namespace
+
+
+def load_cfg(cfg):
+    hyp = None
+    if isinstance(cfg, str):
+        with open(cfg, errors='ignore') as f:
+            hyp = yaml.safe_load(f)  # load hyps dict
+    return Namespace(**hyp)
+
+
+def merge_args_cfg(args, cfg):
+    dict0 = vars(args)
+    dict1 = vars(cfg)
+    dict = {**dict0, **dict1}
+
+    return Namespace(**dict)
 
 
 class AverageMeter(object):
@@ -113,7 +131,7 @@ def validate(val_loader, model, criterion, num_class):
     # 用关键字传过来好了
     num = num_class
     # 构建统计矩阵
-    con_mat = np.zeros((num, num), dtype=np.int)
+    con_mat = np.zeros((num, num), dtype=np.int64)
 
     # switch to evaluate mode
     model.eval()

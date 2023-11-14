@@ -1,44 +1,41 @@
 """
 @Project ：Server_Local 
-@File    ：Testnet.py
+@File    ：Testnet_mvit_3M_2G.py
 @IDE     ：PyCharm 
 @Author  ：chengxuLiu
-@Date    ：2023/10/9 21:11 
+@Date    ：2023/11/2 21:15 
 """
-import time
-
 import torch.nn as nn
-from Testnet_utils.Ghostmodel import *
-from Testnet_utils.PartialConv import *
-from Testnet_utils.Transformer import *
-from Testnet_utils.mobilevit import *
+from .Ghostmodel import *
+from .PartialConv import *
+from .Transformer import *
+from .mobilevit import *
 
 
-class TestNet(nn.Module):
+class Testnet_mvit_3M_2G(nn.Module):
     def __init__(self, num_classes=92):
-        super(TestNet, self).__init__()
+        super(Testnet_mvit_3M_2G, self).__init__()
 
         # self.pool = 'cls'
         self.to_latent = nn.Identity()
-
+        # self.mlp_head = nn.Sequential(
+        #     nn.LayerNorm(960),
+        #     nn.Linear(960, 92)
+        # )
         self.Stage1 = nn.Sequential(
             GhostModule(3, 32, kernel_size=1, stride=2, relu=True),
             Partial_block(32),
             Partial_block(32),
-
+            # GhostModule(64, 120, stride=2, relu=True)
         )
-        self.T1 = MobileViTBlock(32, 2, 32, 3, (2, 2), 32, 0.3)
-
         self.Stage2 = nn.Sequential(
             GhostModule(32, 64, kernel_size=1, stride=2, relu=True),
             Partial_block(64),
             Partial_block(64),
             Partial_block(64),
             Partial_block(64)
-
+            # Partial_block(120)
         )
-        self.T2 = MobileViTBlock(64, 2, 64, 3, (2, 2), 64, 0.3)
-
         self.Stage3 = nn.Sequential(
             GhostModule(64, 96, kernel_size=3, stride=2, relu=True),
             Partial_block(96),
@@ -48,8 +45,6 @@ class TestNet(nn.Module):
             Partial_block(96),
             Partial_block(96)
         )
-        self.T3 = MobileViTBlock(96, 2, 96, 3, (2, 2), 96, 0.3)
-
         self.Stage4 = nn.Sequential(
             GhostModule(96, 128, kernel_size=3, relu=True),
             Partial_block(128),
@@ -59,44 +54,59 @@ class TestNet(nn.Module):
             Partial_block(128),
             Partial_block(128)
         )
-        self.T4 = MobileViTBlock(128, 2, 128, 3, (2, 2), 128, 0.3)
-
         self.Stage5 = nn.Sequential(
             GhostModule(128, 256, kernel_size=3, stride=2, relu=True),
+            Partial_block(256),
             Partial_block(256),
             Partial_block(256),
             Partial_block(256),
             Partial_block(256)
         )
 
-        self.T5 = MobileViTBlock(256, 2, 256, 3, (2, 2), 256, 0.3)
+        self.Transformer = MobileViTBlock(256, 2, 256, 3, (2, 2), 256, 0.2)
         self.conv2 = conv_1x1_bn(256, 960)
 
-        self.pool = nn.AvgPool2d(7, 1)
-        self.fc = nn.Linear(960, 92, bias=False)
+        self.pool = nn.AvgPool2d(14, 1)
+        self.fc = nn.Linear(960, num_classes, bias=False)
+        # self.PatchEmbed = PatchEmbedding(embed_size=960, patch_size=3, channels=960, img_size=14)
+        # self.Transformer = Transformer(dim=960, depth=1, n_heads=4, mlp_expansions=1, dropout=0.2)
+
+        self.classifier = nn.Sequential(
+            nn.Linear(960, 1280, bias=False),
+            nn.BatchNorm1d(1280),
+            nn.ReLU(inplace=True),
+            nn.Dropout(0.2),
+            nn.Linear(1280, num_classes)
+        )
+        # self.classifier=nn.Linear()
 
     def forward(self, x):
         x = self.Stage1(x)
-        x = self.T1(x)
         x = self.Stage2(x)
-        x = self.T2(x)
         x = self.Stage3(x)
-        x = self.T3(x)
         x = self.Stage4(x)
-        x = self.T4(x)
         x = self.Stage5(x)
-        x = self.T5(x)
+        x = self.Transformer(x)
         x = self.conv2(x)
-        x = self.pool(x).view(-1, x.shape[1])
-        x = self.fc(x)
+        # x.shape(3,960,14,14)
+        x = self.pool(x).view(x.size(0), -1)
+        # x = self.fc(x)
+        # x = self.PatchEmbed(x)
+        # x = self.Transformer(x)
+        # x = x.mean(dim=1) if self.pool == 'mean' else x[:, 0]
+        # x = self.to_latent(x)
+        # x = self.mlp_head(x)
+        # x = self.pool(x)
+        # x = x.view(x.size(0), -1)
+        x = self.classifier(x)
         return x
 
 
 if __name__ == '__main__':
     from torchinfo import summary
 
-    model = TestNet()
-    summary(model, input_size=(3, 3, 224, 224))
+    model = Testnet_mvit_3M_2G()
+    summary(model, input_size=(1, 3, 224, 224))
 
     # channe1 = 3
     # channe2 = 32

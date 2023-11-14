@@ -5,6 +5,7 @@
 @Software: PyCharm
 """
 import argparse
+import os
 
 import torch.nn as nn
 import torch
@@ -12,40 +13,39 @@ from torch.backends import cudnn
 from main_lib import if_mkdir
 from main_lib import train
 from main_lib import validate
+from main_lib import merge_args_cfg
+from main_lib import load_cfg
 from models import get_model
+from models import model_zoo
 from data import get_data
-
-# num_class = 92
-# optim_name = 'sgd'
-# model_name = 'mobilenetv3_small'
-# data_name = 'fru92'
-# train_batchsize = 64
-# test_batchsize = 64
-# lr = 0.01
-# momentum = 0.9
-# EPOCH = 300
-
+from torch.optim import SGD as sgd
+from torch.optim import Adam as adam
 
 # ==================================================================
 # Parser Initialization
 # ==================================================================
 print('***** Prepare Data ******')
 parser = argparse.ArgumentParser(description='set parama')
-parser.add_argument('--EPOCH', default=300, type=int, help="EPOCH")
-parser.add_argument('--lr', default=0.01, type=float, help="learning rate")
-parser.add_argument('--num_class', default=92, type=int, help="the class number of the dataset")
-parser.add_argument('--data_name', default='fru92', type=str, help="dataset choice")
-parser.add_argument('--optim_name', default='sgd', type=str, help="the class of the optim")
-parser.add_argument('--model_name', default='mobilenetv3_small', type=str, help="model choice")
-parser.add_argument('--train_batchsize', default=64, type=int, help="training batch size")
-parser.add_argument('--test_batchsize', default=64, type=int, help="testing batch size")
+parser.add_argument('--cfg', type=str, default=None)
+parser.add_argument('--lr', default=0.01, type=float, help='lr')
+parser.add_argument('--train_batchsize', default=128, type=int, help='train_batchsize')
+parser.add_argument('--test_batchsize', default=128, type=int, help='test_batchsize')
 parser.add_argument('--loadModel', default='true', type=str, help='load model parameters')
 args = parser.parse_args()
+cfg = load_cfg(args.cfg)
+args = merge_args_cfg(args, cfg)
+
 pathModelParams = './checkpoint/{a}/{a}.pt'.format(a=args.model_name)
 latest_dict_fname = ".".join(pathModelParams.split(".")[:-1]) + "_lastest.pt"
 log_filename = './checkpoint/{}/log.txt'.format(args.model_name)
 path = './checkpoint/{}'.format(args.model_name)
-optim_dict = dict(sgd='sgd', adam='adam')
+
+if os.path.isdir(path):
+    pass
+else:
+    os.mkdir(path)
+
+optim_dict = dict(sgd=sgd, adam=adam)
 print('***** Parser init done ******')
 
 # ==================================================================
@@ -53,7 +53,7 @@ print('***** Parser init done ******')
 # ==================================================================
 print('***** Prepare Data ******')
 train_transforms, test_transforms, train_loader, test_loader = get_data(args.data_name, args.train_batchsize,
-                                                                        args.test_batchsize)
+                                                                        args.test_batchsize, args.k_fold)
 
 print("Dataset done")
 
@@ -62,8 +62,11 @@ print("Dataset done")
 # ==================================================================
 print('\n***** Prepare Model *****')
 
-model = get_model(model_name=args.model_name, num_class=args.num_class)
+# model = get_model(model_name=args.model_name, num_class=args.num_class)
+model = model_zoo(args)
+
 optim = torch.optim.SGD(params=model.parameters(), lr=args.lr, momentum=0.9, weight_decay=0.0001)
+
 criterion = nn.CrossEntropyLoss().cuda()
 scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer=optim, T_max=args.EPOCH)
 
@@ -73,7 +76,7 @@ model = model.cuda()
 cudnn.benchmark = True
 
 best_prec1 = 0
-if_mkdir(path)
+
 for epoch in range(0, args.EPOCH):
     train(train_loader, model, criterion, optim, scheduler, epoch)
     prec1, prec5 = validate(test_loader, model, criterion, args.num_class)

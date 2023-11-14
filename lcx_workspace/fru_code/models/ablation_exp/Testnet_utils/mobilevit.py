@@ -237,10 +237,10 @@ def mobilevit_xs():
     return MobileViT((256, 256), dims, channels, num_classes=1000)
 
 
-def mobilevit_s(num_classes):
+def mobilevit_s():
     dims = [144, 192, 240]
     channels = [16, 32, 64, 64, 96, 96, 128, 128, 160, 160, 640]
-    return MobileViT((256, 256), dims, channels, num_classes=num_classes)
+    return MobileViT((256, 256), dims, channels, num_classes=1000)
 
 
 def count_parameters(model):

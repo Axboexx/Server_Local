@@ -5,84 +5,13 @@
 @Author  ：chengxuLiu
 @Date    ：2023/10/1 15:41 
 """
-from .Testnet_utils.Ghostmodel import *
-from .Testnet_utils.PartialConv import *
-from .Testnet_utils.Transformer import *
-
-
-class TestNet(nn.Module):
-    def __init__(self, num_classes=92):
-        super(TestNet, self).__init__()
-
-        self.pool = 'cls'
-        self.to_latent = nn.Identity()
-        self.mlp_head = nn.Sequential(
-            nn.LayerNorm(960),
-            nn.Linear(960, 92)
-        )
-        self.Stage1 = nn.Sequential(
-            GhostModule(3, 32, kernel_size=1, relu=True),
-            GhostModule(32, 64, kernel_size=1, stride=2, relu=True),
-            GhostModule(64, 120, stride=2, relu=True)
-        )
-        self.Stage2 = nn.Sequential(
-            Partial_block(120),
-            Partial_block(120),
-            Partial_block(120),
-            Partial_block(120)
-        )
-        self.Stage3 = nn.Sequential(
-            GhostModule(120, 240, kernel_size=3, stride=2, relu=True),
-            Partial_block(240),
-            Partial_block(240),
-            Partial_block(240),
-            Partial_block(240)
-        )
-        self.Stage4 = nn.Sequential(
-            GhostModule(240, 480, kernel_size=3, relu=True),
-            Partial_block(480),
-            Partial_block(480),
-            Partial_block(480),
-            Partial_block(480)
-        )
-        self.Stage5 = nn.Sequential(
-            GhostModule(480, 960, kernel_size=3, stride=2, relu=True),
-            Partial_block(960),
-            Partial_block(960)
-        )
-        self.PatchEmbed = PatchEmbedding(embed_size=960, patch_size=3, channels=960, img_size=14)
-        self.Transformer = Transformer(dim=960, depth=1, n_heads=4, mlp_expansions=1, dropout=0.2)
-
-        # self.classifier = nn.Sequential(
-        #     nn.Linear(960, 1280, bias=False),
-        #     nn.BatchNorm1d(1280),
-        #     nn.ReLU(inplace=True),
-        #     nn.Dropout(0.2),
-        #     nn.Linear(1280, num_classes)
-        # )
-        # self.classifier=nn.Linear()
-
-    def forward(self, x):
-        x = self.Stage1(x)
-        x = self.Stage2(x)
-        x = self.Stage3(x)
-        x = self.Stage4(x)
-        x = self.Stage5(x)
-        x = self.PatchEmbed(x)
-        x = self.Transformer(x)
-        x = x.mean(dim=1) if self.pool == 'mean' else x[:, 0]
-        x = self.to_latent(x)
-        x = self.mlp_head(x)
-        # x = self.pool(x)
-        # x = x.view(x.size(0), -1)
-        # x = self.classifier(x)
-        return x
-
+from .Testnet_utils.Testnet_mvit_4M_6G import Testnet_mvit_4M_6G
+from .Testnet_utils.Testnet_mvit_3M_2G import Testnet_mvit_3M_2G
 
 if __name__ == '__main__':
     from torchinfo import summary
 
-    model = TestNet()
+    model = Testnet_mvit_4M_6G()
     summary(model, input_size=(3, 3, 224, 224))
 
     # channe1 = 3

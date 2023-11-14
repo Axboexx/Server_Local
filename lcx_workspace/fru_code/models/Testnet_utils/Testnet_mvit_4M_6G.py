@@ -1,22 +1,22 @@
 """
 @Project ：Server_Local 
-@File    ：Testnet.py
+@File    ：Testnet_mvit_4M_6G.py
 @IDE     ：PyCharm 
 @Author  ：chengxuLiu
-@Date    ：2023/10/9 21:11 
+@Date    ：2023/11/7 21:37 
 """
 import time
 
 import torch.nn as nn
-from Testnet_utils.Ghostmodel import *
-from Testnet_utils.PartialConv import *
-from Testnet_utils.Transformer import *
-from Testnet_utils.mobilevit import *
+from .Ghostmodel import *
+from .PartialConv import *
+from .Transformer import *
+from .mobilevit import *
 
 
-class TestNet(nn.Module):
+class Testnet_mvit_4M_6G(nn.Module):
     def __init__(self, num_classes=92):
-        super(TestNet, self).__init__()
+        super(Testnet_mvit_4M_6G, self).__init__()
 
         # self.pool = 'cls'
         self.to_latent = nn.Identity()
@@ -72,8 +72,15 @@ class TestNet(nn.Module):
         self.T5 = MobileViTBlock(256, 2, 256, 3, (2, 2), 256, 0.3)
         self.conv2 = conv_1x1_bn(256, 960)
 
-        self.pool = nn.AvgPool2d(7, 1)
-        self.fc = nn.Linear(960, 92, bias=False)
+        self.pool = nn.AvgPool2d(14, 1)
+        self.fc = nn.Linear(960, num_classes, bias=False)
+        # self.classifier = nn.Sequential(
+        #     nn.Linear(960, 1280, bias=False),
+        #     nn.BatchNorm1d(1280),
+        #     nn.ReLU(inplace=True),
+        #     nn.Dropout(0.2),
+        #     nn.Linear(1280, num_classes)
+        # )
 
     def forward(self, x):
         x = self.Stage1(x)
@@ -89,13 +96,14 @@ class TestNet(nn.Module):
         x = self.conv2(x)
         x = self.pool(x).view(-1, x.shape[1])
         x = self.fc(x)
+        # x = self.classifier(x)
         return x
 
 
 if __name__ == '__main__':
     from torchinfo import summary
 
-    model = TestNet()
+    model = Testnet_mvit_4M_6G()
     summary(model, input_size=(3, 3, 224, 224))
 
     # channe1 = 3

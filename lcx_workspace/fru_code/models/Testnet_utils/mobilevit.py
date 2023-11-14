@@ -237,10 +237,10 @@ def mobilevit_xs():
     return MobileViT((256, 256), dims, channels, num_classes=1000)
 
 
-def mobilevit_s(num_classes):
+def mobilevit_s():
     dims = [144, 192, 240]
     channels = [16, 32, 64, 64, 96, 96, 128, 128, 160, 160, 640]
-    return MobileViT((256, 256), dims, channels, num_classes=num_classes)
+    return MobileViT((256, 256), dims, channels, num_classes=1000)
 
 
 def count_parameters(model):
@@ -251,6 +251,8 @@ if __name__ == '__main__':
     img = torch.randn(5, 3, 256, 256)
 
     vit = mobilevit_xxs()
+    x = vit(torch.randn(3, 3, 256, 256))
+    print(x.shape)
     summary(vit, input_size=(5, 3, 256, 256))
 
     vit = mobilevit_xs()
