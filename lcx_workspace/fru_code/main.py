@@ -15,11 +15,12 @@ from main_lib import train
 from main_lib import validate
 from main_lib import merge_args_cfg
 from main_lib import load_cfg
-from models import get_model
+from optim import *
 from models import model_zoo
 from data import get_data
 from torch.optim import SGD as sgd
 from torch.optim import Adam as adam
+from checkpoint.find_max_acc import find_max
 
 # ==================================================================
 # Parser Initialization
@@ -35,11 +36,15 @@ args = parser.parse_args()
 cfg = load_cfg(args.cfg)
 args = merge_args_cfg(args, cfg)
 
-pathModelParams = './checkpoint/{a}/{a}.pt'.format(a=args.model_name)
-latest_dict_fname = ".".join(pathModelParams.split(".")[:-1]) + "_lastest.pt"
-log_filename = './checkpoint/{}/log.txt'.format(args.model_name)
-path = './checkpoint/{}'.format(args.model_name)
+if args.k_fold > -1:
+    checkpoint_file = args.model_name + '_k{}'.format(args.k_fold)
+else:
+    checkpoint_file = args.model_name + '_{}'.format(args.data_name)
 
+pathModelParams = './checkpoint/' + checkpoint_file + '/{}.pt'.format(checkpoint_file)
+latest_dict_fname = ".".join(pathModelParams.split(".")[:-1]) + "_lastest.pt"
+log_filename = './checkpoint/{}/log.txt'.format(checkpoint_file)
+path = './checkpoint/' + checkpoint_file
 if os.path.isdir(path):
     pass
 else:
@@ -65,27 +70,28 @@ print('\n***** Prepare Model *****')
 # model = get_model(model_name=args.model_name, num_class=args.num_class)
 model = model_zoo(args)
 
-optim = torch.optim.SGD(params=model.parameters(), lr=args.lr, momentum=0.9, weight_decay=0.0001)
-
+# optim = torch.optim.SGD(params=model.parameters(), lr=args.lr, momentum=0.9, weight_decay=0.0001)
+optim = get_optim(args.optim_name, model.parameters(), args.lr, args.weight_decay)
 criterion = nn.CrossEntropyLoss().cuda()
 scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer=optim, T_max=args.EPOCH)
 
 if args.loadModel == 'true':
-    model.load_state_dict(torch.load(pathModelParams))
+    model.load_state_dict(torch.load(latest_dict_fname))
 model = model.cuda()
 cudnn.benchmark = True
-
-best_prec1 = 0
+if os.path.exists(log_filename):
+    best_prec1 = find_max(log_filename)
+else:
+    best_prec1=0
 
 for epoch in range(0, args.EPOCH):
     train(train_loader, model, criterion, optim, scheduler, epoch)
     prec1, prec5 = validate(test_loader, model, criterion, args.num_class)
-    is_best = prec1 > best_prec1
     if prec1 > best_prec1:
         torch.save(model.state_dict(), pathModelParams)
         print('Checkpoint saved to {}'.format(pathModelParams))
     torch.save(model.state_dict(), latest_dict_fname)
-    print('Save the lastest model to {}'.format(pathModelParams))
+    print('Save the lastest model to {a},bast prec1:{b}'.format(a=pathModelParams, b=best_prec1))
     with open(log_filename, mode='a', encoding="utf-8") as f:
         f.write(
             f"Epoch[{epoch}/{args.EPOCH}]: Prec@1 {prec1:.3f}; Prec@5 {prec5:.3f}\n"
